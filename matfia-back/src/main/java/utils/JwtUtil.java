@@ -13,28 +13,10 @@ public class JwtUtil {
     // 보통 곱하기로 표현한다.
     private static final int EXPIRATION_TIME = 30 * 60 * 1000;
 
-    public static String generateToken() {
+    public static String generateToken(String id,int idx) {
         Claims claims = Jwts.claims();
-        claims.put("userName", "test01");
-        claims.put("userIdx", 10);
-
-        //클라이언트에게 전달할 토큰
-        String token = Jwts.builder()
-                //sub
-                .setClaims(claims)
-                //만든 시간
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                //암호화 방식 key 는 216 bit 이상
-                .signWith(SignatureAlgorithm.HS256, SECRET)
-                .compact();
-        return token;
-    }
-
-    public static String generateToken(String userName,int userIdx) {
-        Claims claims = Jwts.claims();
-        claims.put("userName", userName);
-        claims.put("userIdx", userIdx);
+        claims.put("id", id);
+        claims.put("idx", idx);
 
         //클라이언트에게 전달할 토큰
         String token = Jwts.builder()
@@ -73,7 +55,7 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
 
-            return claims.get("userIdx", Integer.class);
+            return claims.get("idx", Integer.class);
         }catch (ExpiredJwtException e){
             System.out.println("ExpiredJwtException");
         }
